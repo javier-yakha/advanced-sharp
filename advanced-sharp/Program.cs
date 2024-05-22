@@ -1,5 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-using advanced_sharp;
+﻿using ClassLibrary;
+using System.ComponentModel.Design;
+using System.Text;
 
 namespace advanced_sharp
 {
@@ -7,12 +8,37 @@ namespace advanced_sharp
     {
         public static void Main(string[] args)
         {
-            NonDB DB = new();
+            bool auth = Authenticate();
+            Menu(auth);
+        }
+        private static void Menu(bool auth)
+        {
+            var sql = new SqlManager();
 
-            DBManager.InitializeDB(DB);
+            while (auth)
+            {
+                Console.WriteLine("SQL(1) - Exit(any)");
+                char selection = Console.ReadKey(true).KeyChar;
 
-            Console.WriteLine(DB);
+                if (selection == '1') sql.RunSql();
+                else break;
+            }
+        }
 
+        private static bool Authenticate()
+        {
+            int charCount = 0;
+            StringBuilder sb = new();
+            Console.Write("Enter the password. (hint: 123) ");
+            while (charCount < 3)
+            {
+                char key = Console.ReadKey(true).KeyChar;
+                charCount++;
+                sb.Append(key);
+            }
+            Console.WriteLine();
+
+            return sb.ToString() == "123";
         }
     }
 }

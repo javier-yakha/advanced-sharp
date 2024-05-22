@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[Inventories]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [ProductId] UNIQUEIDENTIFIER NOT NULL, 
+    [LastUpdated] DATETIME NOT NULL DEFAULT SYSUTCDATETIME(), 
+    [TotalStock] INT NOT NULL DEFAULT 0
+
+    CONSTRAINT [FK_Inventories_ProductId] 
+        FOREIGN KEY (ProductId) 
+        REFERENCES Products(Id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+)
