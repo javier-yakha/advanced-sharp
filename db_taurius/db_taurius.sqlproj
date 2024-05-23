@@ -71,6 +71,7 @@
     <Build Include="ReturnProductForms.sql" />
     <Build Include="RETRIEVE_AllProductTitles.sql" />
     <Build Include="INSERT_ReturnProductForm.sql" />
+    <Build Include="RETRIEVE_All_Inventories.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="db_taurius.refactorlog" />
