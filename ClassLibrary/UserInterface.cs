@@ -151,30 +151,23 @@ namespace ClassLibrary
             SQL.RetrieveProductStock();
 
             string? title = null;
-            int stock = 0;
-            bool titleStatus = false;
-            bool stockStatus = false;
-
-            while (true)
+            while (title is null)
             {
-                if (!titleStatus)
+                Console.Write("Product title to update: ");
+                title = Console.ReadLine();
+                if (title is not null && title.Length < 90)
                 {
-                    Console.Write("Product title to update: ");
-                    title = Console.ReadLine();
-                    if (title is not null && title.Length < 90)
-                    {
-                        titleStatus = true;
-                    }
-                    continue;
+                    break;
                 }
-                if (!stockStatus)
-                {
-                    Console.Write("New total stock: ");
-                    bool stockIntStatus = Int32.TryParse(Console.ReadLine(), out stock);
-                    stockStatus = stockIntStatus && stock >= 0;
-                    continue;
-                }
-                break;
+            }
+
+            int stock = 0;
+            bool stockStatus = false;
+            while (!stockStatus)
+            {
+                Console.Write("New total stock: ");
+                bool stockIntStatus = Int32.TryParse(Console.ReadLine(), out stock);
+                stockStatus = stockIntStatus && stock >= 0;
             }
 
             SQL.ExecuteUpdateProductStock(title, stock);
@@ -215,7 +208,14 @@ namespace ClassLibrary
             {
                 title = Console.ReadLine();
             }
-            string productId = SQL.ReturnProductIdByTitle(title);
+            
+            string? productId = SQL.ReturnProductIdByTitle(title);
+
+            if (productId is null)
+            {
+                Console.WriteLine($"No product matched by the name {title}.");
+                return;
+            }
 
             Console.WriteLine("Fill the return product form.");
 
