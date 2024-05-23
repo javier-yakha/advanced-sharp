@@ -24,46 +24,44 @@ namespace ClassLibrary
         {
             List<Models.Product> results = [];
 
-            using (SqlConnection conn = new(ConnectionString))
+            using SqlConnection conn = new(ConnectionString);
+            conn.Open();
+            try
             {
-                conn.Open();
-                try
+                SqlCommand command = new("RETRIEVE_AllProducts", conn);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (!reader.HasRows)
                 {
-                    SqlCommand command = new SqlCommand("RETRIEVE_AllProducts", conn);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (!reader.HasRows)
-                    {
-                        return results;
-                    }
-
-                    while (reader.Read()) 
-                    {
-                        Models.Product product = new();
-                        product.Id = reader.GetGuid(0).ToString();
-                        product.Title = reader.GetString(1);
-                        product.Price = reader.GetDecimal(2);
-                        product.DateAdded = reader.GetDateTime(3);
-                        product.Description = reader.GetString(4);
-                        product.DiscountPrice = reader.GetDecimal(5);
-                        product.Enabled = reader.GetBoolean(6);
-                        product.TotalStock = reader.GetInt32(7);
-
-                        results.Add(product);
-                    }
-                    conn.Close();
-
                     return results;
                 }
-                catch (SqlException e)
-                {
-                    conn.Close();
-                    Console.WriteLine(e.Message);
 
-                    return results;
+                while (reader.Read())
+                {
+                    Models.Product product = new();
+                    product.Id = reader.GetGuid(0).ToString();
+                    product.Title = reader.GetString(1);
+                    product.Price = reader.GetDecimal(2);
+                    product.DateAdded = reader.GetDateTime(3);
+                    product.Description = reader.GetString(4);
+                    product.DiscountPrice = reader.GetDecimal(5);
+                    product.Enabled = reader.GetBoolean(6);
+                    product.TotalStock = reader.GetInt32(7);
+
+                    results.Add(product);
                 }
+                conn.Close();
+
+                return results;
+            }
+            catch (SqlException e)
+            {
+                conn.Close();
+                Console.WriteLine(e.Message);
+
+                return results;
             }
         }
 

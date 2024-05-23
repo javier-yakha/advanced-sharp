@@ -1,18 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Globalization;
-using ClassLibrary;
 using CsvHelper;
 
-namespace CsvManagement
+namespace ClassLibrary
 {
-    public class CsvManager
+    public static class CsvManager
     {
         public class TestDataModel
         {
             public int Id { get; set;}
         }
-        public void ReadTest()
+        public static void ReadTest()
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\CSVTraining";
             bool exists = Directory.Exists(folderPath);
@@ -26,15 +25,20 @@ namespace CsvManagement
             var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
 
             var output = csvReader.GetRecords<TestDataModel>().ToList();
+
+            foreach ( var record in output )
+            {
+                Console.WriteLine( record );
+            }
         }
 
-        public void SaveProductIntoCsv()
+        public static void SaveProductsIntoCsv()
         {
-            string folderPath = CreateDirectoryIfNotExists();
-            List<ClassLibrary.Models.Product> productList = GetProducts();
+            string folderPath = CreateDirectoryIfNotExists("Products");
+            List<Models.Product> productList = GetProducts();
 
             DateTime date = DateTime.Now;
-            string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_Products.csv";
+            string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_Products.csv";
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -44,9 +48,9 @@ namespace CsvManagement
             csvWriter.Dispose();
             writer.Dispose();
         }
-        public string CreateDirectoryIfNotExists()
+        private static string CreateDirectoryIfNotExists(string tableName)
         {
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\CSVdump";
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\CSVdump_{tableName}";
             bool exists = Directory.Exists(folderPath);
 
             if (!exists)
@@ -56,9 +60,10 @@ namespace CsvManagement
 
             return folderPath;
         }
-        public List<ClassLibrary.Models.Product> GetProducts()
+        public static List<Models.Product> GetProducts()
         {
             SqlManager sql = new();
+
             return sql.ExecuteRetrieveAllProducts();
         } 
     }

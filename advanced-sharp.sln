@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrar
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "db_taurius", "db_taurius\db_taurius.sqlproj", "{01D6593B-B50A-470C-BC24-B199D9734C33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvConsole", "CsvConsole\CsvConsole.csproj", "{22578D28-91C8-435B-BE83-24194172F3B9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +29,6 @@ Global
 		{01D6593B-B50A-470C-BC24-B199D9734C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01D6593B-B50A-470C-BC24-B199D9734C33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01D6593B-B50A-470C-BC24-B199D9734C33}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{22578D28-91C8-435B-BE83-24194172F3B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22578D28-91C8-435B-BE83-24194172F3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22578D28-91C8-435B-BE83-24194172F3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22578D28-91C8-435B-BE83-24194172F3B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,7 +10,7 @@ namespace ClassLibrary
 {
     public class UserInterface
     {
-        private SqlManager SQL = new();
+        private readonly SqlManager SQL = new();
         private static bool Auth = false;
 
         public void Run()
@@ -25,28 +25,25 @@ namespace ClassLibrary
                 Console.WriteLine("SQL(1)" +
                     "\nCSV(2)" +
                     "\nExit(any)");
-                char selection = Console.ReadKey(true).KeyChar;
 
+                char selection = Console.ReadKey(true).KeyChar;
                 switch (selection)
                 {
                     case '1':
                         RunSql();
                         break;
                     case '2':
-                        // TODO - Run CSV user interface 
-                        // RunCsv();
+                        RunCSV();
                         break;
                     default:
+                        Auth = false;
                         break;
                 };
             }
-
-            Auth = false;
             Console.WriteLine("Logged out of the DataBase management Service.");
-
         }
 
-        private bool Authenticate()
+        private static bool Authenticate()
         {
             int charCount = 0;
             StringBuilder sb = new();
@@ -263,9 +260,10 @@ namespace ClassLibrary
             }
         }
 
-        private void SaveIntoCsvProducts()
+        private static void SaveIntoCsvProducts()
         {
             Console.WriteLine("Saving Products into CSV file.");
+            CsvManager.SaveProductsIntoCsv();
         }
 
         private void SaveIntoCsvInventories()

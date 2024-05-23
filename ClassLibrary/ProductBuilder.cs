@@ -41,7 +41,7 @@ namespace ClassLibrary
         {
             bool priceStatus = false;
             decimal parsedPrice = default;
-            while (priceStatus)
+            while (!priceStatus)
             {
                 Console.Write("Price: ");
                 string price = Console.ReadLine();
@@ -53,10 +53,9 @@ namespace ClassLibrary
 
         private void CreateDescription()
         {
-            bool descriptionStatus = false;
-            string description = string.Empty;
+            string? description = null;
 
-            while (!descriptionStatus)
+            while (description is null)
             {
                 Console.Write("Description: ");
                 description = Console.ReadLine();
@@ -64,6 +63,7 @@ namespace ClassLibrary
                 {
                     break;
                 }
+                Console.WriteLine("Enter a valid description.");
             }
 
             product.Description = description;
@@ -74,20 +74,22 @@ namespace ClassLibrary
             Console.WriteLine("Type nothing if no discount is applicable.");
             Console.Write("Discount Price: ");
 
-            string discountPrice = Console.ReadLine();
+            string? discountPrice = Console.ReadLine();
             if (discountPrice is not null && discountPrice.Length > 0)
             {
                 bool status = decimal.TryParse(discountPrice, out decimal parsedDiscountPrice) 
                      && parsedDiscountPrice >= 0;
-
-                product.DiscountPrice = parsedDiscountPrice;
+                if (status)
+                {
+                    product.DiscountPrice = parsedDiscountPrice;
+                }
             }
-
         }
 
         private void CreateEnabled()
         {
-            throw new NotImplementedException();
+            Random r = new();
+            product.Enabled = r.NextDouble() < 0.5;
         }
 
     }
