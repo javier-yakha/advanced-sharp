@@ -109,9 +109,9 @@ namespace ClassLibrary
             char key = Console.ReadKey(true).KeyChar;
             form.DesiredSolution = key switch
             {
-                '1' => Models.DesiredSolutions.CashRefund,
-                '2' => Models.DesiredSolutions.Replace,
-                _ => Models.DesiredSolutions.VoucherCard
+                '1' => Enums.DesiredSolutions.CashRefund,
+                '2' => Enums.DesiredSolutions.Replace,
+                _ => Enums.DesiredSolutions.VoucherCard
             };
         }
         private void CreateDateReceived()
