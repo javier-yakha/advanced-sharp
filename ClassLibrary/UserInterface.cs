@@ -22,11 +22,23 @@ namespace ClassLibrary
 
             while (Auth)
             {
-                Console.WriteLine("SQL(1) - Exit(any)");
+                Console.WriteLine("SQL(1)" +
+                    "\nCSV(2)" +
+                    "\nExit(any)");
                 char selection = Console.ReadKey(true).KeyChar;
 
-                if (selection == '1') RunSql();
-                break;
+                switch (selection)
+                {
+                    case '1':
+                        RunSql();
+                        break;
+                    case '2':
+                        // TODO - Run CSV user interface 
+                        // RunCsv();
+                        break;
+                    default:
+                        break;
+                };
             }
 
             Auth = false;
@@ -69,6 +81,7 @@ namespace ClassLibrary
                     + "\nUpdate Stock(3)"
                     + "\nDelete Product(4)"
                     + "\nReturn Product Form(5)"
+                    + "\nSearch Product(6)"
                     + "\nExit(any)");
                 char selection = Console.ReadKey(true).KeyChar;
 
@@ -87,7 +100,10 @@ namespace ClassLibrary
                         DeleteProduct();
                         break;
                     case '5':
-                        ReturnProduct();
+                        ReturnProductForm();
+                        break;
+                    case '6':
+                        SearchProduct();
                         break;
                     default:
                         exit = true;
@@ -186,7 +202,7 @@ namespace ClassLibrary
             SQL.DeleteProduct(title);
         }
 
-        public void ReturnProduct()
+        public void ReturnProductForm()
         {
             Console.WriteLine("Returning a product.");
             Console.WriteLine("Please choose the product to return.");
@@ -204,6 +220,12 @@ namespace ClassLibrary
             Models.ReturnProductForm form = formBuilder.CreateReturnProductForm();
 
             SQL.ExecuteReturnProduct(form);
+        }
+
+        public void SearchProduct()
+        {
+            // TODO - implement search product
+            throw new NotImplementedException();
         }
     }
 }
