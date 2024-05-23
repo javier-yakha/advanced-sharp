@@ -65,8 +65,12 @@
     <Build Include="UPDATE_ProductStockById.sql" />
     <Build Include="INSERT_InventoryProduct.sql" />
     <Build Include="RETRIEVE_LatestProductId.sql" />
-    <Build Include="RETRIEVE_ProductIdByName.sql" />
+    <Build Include="RETRIEVE_ProductIdByTitle.sql" />
     <Build Include="RETRIEVE_AllProductStock.sql" />
+    <Build Include="DELETE_Product.sql" />
+    <Build Include="ReturnProductForms.sql" />
+    <Build Include="RETRIEVE_AllProductTitles.sql" />
+    <Build Include="INSERT_ReturnProductForm.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="db_taurius.refactorlog" />

@@ -7,6 +7,8 @@ using Microsoft.Data.SqlClient;
 using System.Configuration;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Data;
+using ClassLibrary;
+using System.Numerics;
 
 namespace ClassLibrary
 {
@@ -18,36 +20,8 @@ namespace ClassLibrary
         {
             ConnectionString = "Data Source=DESKTOP-SIE9983;Initial Catalog=db_taurius;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0";
         }
-
-        public void RunSql()
-        {
-            bool exit = false;
-            Console.WriteLine("Welcome to the SQL manager.");
-            while (!exit)
-            {
-                Console.WriteLine("Show All(1)" + "Update Stock(2)".PadLeft(16) + "Add Product(3)".PadLeft(15) + "Delete(4)".PadLeft(10) + "Exit(5)".PadLeft(8));
-                char selection = Console.ReadKey(true).KeyChar;
-
-                switch (selection)
-                {
-                    case '1':
-                        RetrieveAllProducts();
-                        break;
-                    case '2':
-                        UpdateProductStock();
-                        break;
-                    case '3':
-                        AddProduct();
-                        break;
-                    case '4':
-                        break;
-                    case '5':
-                        exit = true;
-                        break;
-                }
-            }
-        }
-        public List<Models.Product> RetrieveAllProducts()
+        
+        public List<Models.Product> ExecuteRetrieveAllProducts()
         {
             List<Models.Product> results = [];
 
@@ -63,7 +37,6 @@ namespace ClassLibrary
 
                     if (!reader.HasRows)
                     {
-                        Console.WriteLine("Empty table <Products>");
                         return results;
                     }
 
@@ -77,15 +50,11 @@ namespace ClassLibrary
                         product.Description = reader.GetString(4);
                         product.DiscountPrice = reader.GetDecimal(5);
                         product.Enabled = reader.GetBoolean(6);
+                        product.TotalStock = reader.GetInt32(7);
 
                         results.Add(product);
                     }
-
-                    foreach (var result in results)
-                    {
-                        Console.WriteLine(result);
-                    }
-                    Console.WriteLine();
+                    conn.Close();
 
                     return results;
                 }
@@ -99,53 +68,7 @@ namespace ClassLibrary
             }
         }
 
-        public void AddProduct()
-        {
-            bool titleStatus = false;
-            bool descriptionStatus = false;
-            bool priceStatus = false;
-
-            string title = string.Empty;
-            decimal parsedPrice = default;
-            string description = string.Empty;
-
-            Console.WriteLine("Adding a new Product.");
-            while (true)
-            {
-                if (!titleStatus)
-                {
-                    Console.Write("Title: ");
-                    title = Console.ReadLine();
-                    if (title is not null && title.Length < 50)
-                    {
-                        titleStatus = true;
-                    }
-                    continue;
-                }
-                if (!priceStatus)
-                {
-                    Console.Write("Price: ");
-                    string price = Console.ReadLine();
-                    priceStatus = decimal.TryParse(price, out parsedPrice) && parsedPrice >= 0;
-                    continue;
-                }
-                if (!descriptionStatus)
-                {
-                    Console.Write("Description: ");
-                    description = Console.ReadLine();
-                    if (description is not null && description.Length < 90)
-                    {
-                        descriptionStatus = true;
-                    }
-                    continue;
-                }
-                break;
-            }
-            bool result = ExecuteAddProduct(title, parsedPrice, description);
-            Console.WriteLine(result);
-        }
-
-        private bool ExecuteAddProduct(string title, decimal price, string description)
+        public bool ExecuteAddProduct(Models.Product product)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
@@ -156,9 +79,9 @@ namespace ClassLibrary
                     SqlCommand insertProductCommand = new("dbo.INSERT_Product", connection);
                     insertProductCommand.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    insertProductCommand.Parameters.AddWithValue("@Title", title);
-                    insertProductCommand.Parameters.AddWithValue("@Price", price);
-                    insertProductCommand.Parameters.AddWithValue("@Description", description);
+                    insertProductCommand.Parameters.AddWithValue("@Title", product.Title);
+                    insertProductCommand.Parameters.AddWithValue("@Price", product.Price);
+                    insertProductCommand.Parameters.AddWithValue("@Description", product.Description is null ? DBNull.Value : product.Description);
 
                     int rowsAffected = insertProductCommand.ExecuteNonQuery();
                     if (rowsAffected <= 0)
@@ -178,9 +101,11 @@ namespace ClassLibrary
                     int rowsAffect = insertInventoryProductCommand.ExecuteNonQuery();
                     if (rowsAffected <= 0)
                     {
+                        connection.Close();
                         return false;
                     }
 
+                    connection.Close();
                     return true;
                 }
                 catch (SqlException e)
@@ -192,10 +117,8 @@ namespace ClassLibrary
             }
         }
 
-        public void UpdateProductStock()
+        public void RetrieveProductStock()
         {
-            Console.WriteLine("Updating stock for a product.");
-            Console.WriteLine("What product would you like to update?");
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 try
@@ -217,10 +140,12 @@ namespace ClassLibrary
                         string productTitle = reader.GetString(0);
                         int totalSTock = reader.GetInt32(1);
                         string lastUpdated = reader.GetDateTime(2).ToString();
-                        Console.WriteLine($"\t{productTitle} " 
-                            + $"current stock: {totalSTock}"
-                            + $"- updated: {lastUpdated}");
+                        Console.WriteLine($"\t{productTitle} ".PadRight(18)
+                            + $"current stock: {totalSTock}".PadRight(20)
+                            + $"- updated: {lastUpdated}".PadLeft(20));
                     }
+
+                    connection.Close();
                 }
                 catch (SqlException e)
                 {
@@ -228,36 +153,9 @@ namespace ClassLibrary
                     connection.Close();
                 }
             }
-
-            string title = string.Empty;
-            int stock = 0;
-            bool titleStatus = false;
-            bool stockStatus = false;
-
-            while (true)
-            {
-                if (!titleStatus)
-                {
-                    Console.Write("Product title to update: ");
-                    title = Console.ReadLine();
-                    if (title is not null && title.Length < 90) 
-                    { 
-                        titleStatus = true;
-                    }
-                    continue;
-                }
-                if (!stockStatus)
-                {
-                    Console.Write("New total stock: ");
-                    stockStatus = Int32.TryParse(Console.ReadLine(), out stock);
-                    continue;
-                }
-                break;
-            }
-            ExecuteUpdateProductStock(title, stock);
         }
 
-        private void ExecuteUpdateProductStock(string title, int stock)
+        public void ExecuteUpdateProductStock(string title, int stock)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
@@ -265,7 +163,7 @@ namespace ClassLibrary
                 {
                     connection.Open();
 
-                    SqlCommand retrieveIdCommand = new("RETRIEVE_ProductIdByName", connection);
+                    SqlCommand retrieveIdCommand = new("RETRIEVE_ProductIdByTitle", connection);
                     retrieveIdCommand.CommandType = System.Data.CommandType.StoredProcedure;
                     retrieveIdCommand.Parameters.AddWithValue("@Title", title);
                     var productId = retrieveIdCommand.ExecuteScalar().ToString();
@@ -279,10 +177,150 @@ namespace ClassLibrary
                     {
                         Console.WriteLine("Query failed !!!! ABORT !!!");
                     }
+
+                    connection.Close();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
+                    connection.Close();
+                }
+            }
+        }
+        public void RetrieveProductTitles()
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    SqlCommand retrieveNameCmd = new("RETRIEVE_AllProductTitles", connection);
+                    retrieveNameCmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    SqlDataReader reader = retrieveNameCmd.ExecuteReader();
+
+                    if (!reader.HasRows)
+                    {
+                        Console.WriteLine("Table <Products> is empty.");
+                        return;
+                    }
+                    while (reader.Read())
+                    {
+                        Console.WriteLine(reader.GetString(0));
+                    }
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+        public void DeleteProduct(string title)
+        {
+            using (SqlConnection connection = new(ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    SqlCommand deleteProduct = new("DELETE_Product", connection);
+                    deleteProduct.CommandType = System.Data.CommandType.StoredProcedure;
+                    deleteProduct.Parameters.AddWithValue("@Title", title);
+
+                    int rowsAffected = deleteProduct.ExecuteNonQuery();
+                    if (rowsAffected <= 0)
+                    {
+                        Console.WriteLine("Failed operation, /dev/sd* was deleted.");
+                    }
+
+                    connection.Close();
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                    connection.Close();
+                }
+            }
+        }
+
+        public string ReturnProductIdByTitle(string title)
+        {
+            using (SqlConnection connection = new(ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand cmd = new("RETRIEVE_ProductIdByTitle", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@title", title);
+
+                    string productId = cmd.ExecuteScalar().ToString();
+
+                    connection.Close();
+
+                    return productId;
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                    connection.Close();
+
+                    return null;
+                }
+            }
+        }
+        
+        public void ExecuteReturnProduct(Models.ReturnProductForm form)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT_ReturnProductForm", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ProductId", form.ProductId is null ? DBNull.Value : form.ProductId);
+                    cmd.Parameters.AddWithValue("@Used", form.Used is null ? DBNull.Value : form.Used);
+                    cmd.Parameters.AddWithValue("@DamagedOnArrival", form.DamagedOnArrival is null ? DBNull.Value : form.DamagedOnArrival);
+                    cmd.Parameters.AddWithValue("@Working", form.Working is null ? DBNull.Value : form.Working);
+                    cmd.Parameters.AddWithValue("@CausedDamage", form.CausedDamage is null ? DBNull.Value : form.CausedDamage);
+                    cmd.Parameters.AddWithValue("@Complaint", form.Complaint);
+                    cmd.Parameters.AddWithValue("@DateOrdered", form.DateOrdered);
+                    cmd.Parameters.AddWithValue("@ProductArrived", form.ProductArrived);
+                    cmd.Parameters.AddWithValue("@DesiredSolution", form.GetDesiredSolution());
+                    cmd.Parameters.AddWithValue("@DateReceived", form.DateReceived is null ? DBNull.Value : form.DateReceived);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Return product form inserted correctly.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Fatal error database dead pls help");
+                    }
+                    connection.Close();
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                    connection.Close();
+                }
+            }
+        }
+
+        public void RetrieveProductForms()
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("RETRIEVE_AllReturnProductForms", connection);
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                    connection.Close();
                 }
             }
         }

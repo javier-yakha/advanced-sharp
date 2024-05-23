@@ -4,7 +4,7 @@
 	[Title] NVARCHAR(50) NOT NULL,
 	[Price] MONEY NOT NULL,
 	[DateAdded] DATETIME NOT NULL, 
-    [Description] NVARCHAR(100) NOT NULL default 'Product', 
-    [DiscountPrice] MONEY NOT NULL DEFAULT 0, 
+    [Description] NVARCHAR(100) NULL , 
+    [DiscountPrice] MONEY NULL , 
     [Enabled] BIT NOT NULL DEFAULT 0
 )
