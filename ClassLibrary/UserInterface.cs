@@ -42,7 +42,7 @@ namespace ClassLibrary
             }
 
             Auth = false;
-            Console.WriteLine("Logged out of the SqlManager Service.");
+            Console.WriteLine("Logged out of the DataBase management Service.");
 
         }
 
@@ -150,7 +150,7 @@ namespace ClassLibrary
 
             SQL.RetrieveProductStock();
 
-            string title = string.Empty;
+            string? title = null;
             int stock = 0;
             bool titleStatus = false;
             bool stockStatus = false;
@@ -187,10 +187,11 @@ namespace ClassLibrary
 
             SQL.RetrieveProductTitles();
 
-            string title;
-            while (true)
+            string? title = null;
+            while (title is null)
             {
                 Console.Write("Product to delete: ");
+                
                 title = Console.ReadLine();
                 if (title is not null && title.Length < 90)
                 {
@@ -209,8 +210,11 @@ namespace ClassLibrary
 
             SQL.RetrieveProductTitles();
 
-            string title = Console.ReadLine();
-
+            string? title = null;
+            while (title is null)
+            {
+                title = Console.ReadLine();
+            }
             string productId = SQL.ReturnProductIdByTitle(title);
 
             Console.WriteLine("Fill the return product form.");
@@ -225,6 +229,52 @@ namespace ClassLibrary
         public void SearchProduct()
         {
             // TODO - implement search product
+            throw new NotImplementedException();
+        }
+
+        public void RunCSV()
+        {
+            bool exit = false;
+            Console.WriteLine("Welcome to the CSV manager.");
+            Console.WriteLine("What records would you like to save in CSV?");
+            while (!exit)
+            {
+                Console.WriteLine("Save Products(1)"
+                    + "\nSave Inventories(2)"
+                    + "\nSave return product forms(3)"
+                    + "\nExit(any)");
+                char selection = Console.ReadKey(true).KeyChar;
+
+                switch (selection)
+                {
+                    case '1':
+                        SaveIntoCsvProducts();
+                        break;
+                    case '2':
+                        SaveIntoCsvInventories();
+                        break;
+                    case '3':
+                        SaveIntoCsvReturnProductForms();
+                        break;
+                    default:
+                    exit = true;
+                        break;
+                }
+            }
+        }
+
+        private void SaveIntoCsvProducts()
+        {
+            Console.WriteLine("Saving Products into CSV file.");
+        }
+
+        private void SaveIntoCsvInventories()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SaveIntoCsvReturnProductForms()
+        {
             throw new NotImplementedException();
         }
     }
