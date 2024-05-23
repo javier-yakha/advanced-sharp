@@ -2,9 +2,7 @@
 using System.IO;
 using System.Globalization;
 using ClassLibrary;
-using ClassLibrary.Models;
 using CsvHelper;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace CsvManagement
 {
@@ -33,7 +31,7 @@ namespace CsvManagement
         public void SaveProductIntoCsv()
         {
             string folderPath = CreateDirectoryIfNotExists();
-            List<Models.Product> productList = GetProducts();
+            List<ClassLibrary.Models.Product> productList = GetProducts();
 
             DateTime date = DateTime.Now;
             string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_Products.csv";
@@ -58,7 +56,7 @@ namespace CsvManagement
 
             return folderPath;
         }
-        public List<Models.Product> GetProducts()
+        public List<ClassLibrary.Models.Product> GetProducts()
         {
             SqlManager sql = new();
             return sql.ExecuteRetrieveAllProducts();

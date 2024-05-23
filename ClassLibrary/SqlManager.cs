@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Configuration;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Data;
 using ClassLibrary;
 using System.Numerics;
@@ -242,7 +241,7 @@ namespace ClassLibrary
             }
         }
 
-        public string ReturnProductIdByTitle(string title)
+        public string? ReturnProductIdByTitle(string title)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
@@ -253,7 +252,7 @@ namespace ClassLibrary
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@title", title);
 
-                    string productId = cmd.ExecuteScalar().ToString();
+                    string? productId = cmd.ExecuteScalar().ToString();
 
                     connection.Close();
 
