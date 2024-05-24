@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using System.Configuration;
 using System.Data;
 using ClassLibrary;
+using DataModels.Models;
 using System.Numerics;
 
 namespace ClassLibrary
@@ -20,9 +21,9 @@ namespace ClassLibrary
             ConnectionString = "Data Source=DESKTOP-SIE9983;Initial Catalog=db_taurius;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0";
         }
         
-        public List<Models.Product> ExecuteRetrieveAllProducts()
+        public List<Product> ExecuteRetrieveAllProducts()
         {
-            List<Models.Product> results = [];
+            List<Product> results = [];
 
             using SqlConnection conn = new(ConnectionString);
             conn.Open();
@@ -40,7 +41,7 @@ namespace ClassLibrary
 
                 while (reader.Read())
                 {
-                    Models.Product product = new();
+                    Product product = new();
                     product.Id = reader.GetGuid(0).ToString();
                     product.Title = reader.GetString(1);
                     product.Price = reader.GetDecimal(2);
@@ -65,7 +66,7 @@ namespace ClassLibrary
             }
         }
 
-        public bool ExecuteAddProduct(Models.Product product)
+        public bool ExecuteAddProduct(Product product)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
@@ -266,7 +267,7 @@ namespace ClassLibrary
             }
         }
         
-        public void ExecuteReturnProduct(Models.ReturnProductForm form)
+        public void ExecuteReturnProduct(ReturnProductForm form)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {

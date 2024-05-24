@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Models
+namespace DataModels.Models
 {
     public class Product
     {
@@ -19,7 +19,7 @@ namespace ClassLibrary.Models
 
         public override string ToString()
         {
-            string price = String.Format("{0:0.00}", DiscountPrice < Price ? DiscountPrice : Price);
+            string price = string.Format("{0:0.00}", DiscountPrice < Price ? DiscountPrice : Price);
             string prices = $"${price}";
             string enabled = Enabled ? "available" : "unavailable";
             string stock = TotalStock is not null ? $"\n\tCurrent Stock: {TotalStock}" : "";

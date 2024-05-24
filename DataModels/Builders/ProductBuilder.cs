@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary
+namespace DataModels.Builders
 {
     public class ProductBuilder
     {
@@ -23,15 +23,11 @@ namespace ClassLibrary
 
         private void CreateTitle()
         {
-            string title;
-            while (true)
+            string? title = null;
+            while (!(title is not null && title.Length < 50))
             {
                 Console.Write("Title: ");
                 title = Console.ReadLine();
-                if (title is not null && title.Length < 50)
-                {
-                    break;
-                }
             }
 
             product.Title = title;
@@ -77,7 +73,7 @@ namespace ClassLibrary
             string? discountPrice = Console.ReadLine();
             if (discountPrice is not null && discountPrice.Length > 0)
             {
-                bool status = decimal.TryParse(discountPrice, out decimal parsedDiscountPrice) 
+                bool status = decimal.TryParse(discountPrice, out decimal parsedDiscountPrice)
                      && parsedDiscountPrice >= 0;
                 if (status)
                 {

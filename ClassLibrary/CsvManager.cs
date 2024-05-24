@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Globalization;
+using DataModels.Models;
 using CsvHelper;
 
 namespace ClassLibrary
@@ -35,7 +36,7 @@ namespace ClassLibrary
         public static void SaveProductsIntoCsv()
         {
             string folderPath = CreateDirectoryIfNotExists("Products");
-            List<Models.Product> productList = GetProducts();
+            List<Product> productList = GetProducts();
 
             DateTime date = DateTime.Now;
             string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_Products.csv";
@@ -50,7 +51,7 @@ namespace ClassLibrary
         }
         private static string CreateDirectoryIfNotExists(string tableName)
         {
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\CSVdump_{tableName}";
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\CSVdump\\{tableName}";
             bool exists = Directory.Exists(folderPath);
 
             if (!exists)
@@ -60,7 +61,7 @@ namespace ClassLibrary
 
             return folderPath;
         }
-        public static List<Models.Product> GetProducts()
+        public static List<Product> GetProducts()
         {
             SqlManager sql = new();
 

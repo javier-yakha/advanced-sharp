@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
+using DataModels.Models;
+using DataModels.Builders;
 
 namespace ClassLibrary
 {
@@ -111,7 +113,7 @@ namespace ClassLibrary
 
         public void RetrieveAllProducts()
         {
-            List<Models.Product> products = SQL.ExecuteRetrieveAllProducts();
+            List<Product> products = SQL.ExecuteRetrieveAllProducts();
 
             if (products.Count == 0)
             {
@@ -119,7 +121,7 @@ namespace ClassLibrary
 
                 return;
             }
-            foreach (Models.Product product in products)
+            foreach (Product product in products)
             {
                 Console.WriteLine(product);
             }
@@ -132,7 +134,7 @@ namespace ClassLibrary
             Console.WriteLine("Adding a new Product.");
 
             ProductBuilder productBuilder = new();
-            Models.Product product = productBuilder.CreateProduct();
+            Product product = productBuilder.CreateProduct();
 
             bool result = SQL.ExecuteAddProduct(product);
 
@@ -218,7 +220,7 @@ namespace ClassLibrary
 
             ReturnProductFormBuilder formBuilder = new(productId);
 
-            Models.ReturnProductForm form = formBuilder.CreateReturnProductForm();
+            ReturnProductForm form = formBuilder.CreateReturnProductForm();
 
             SQL.ExecuteReturnProduct(form);
         }
@@ -263,6 +265,7 @@ namespace ClassLibrary
         private static void SaveIntoCsvProducts()
         {
             Console.WriteLine("Saving Products into CSV file.");
+
             CsvManager.SaveProductsIntoCsv();
         }
 

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DataModels.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Models
+namespace DataModels.Models
 {
     public class ReturnProductForm
     {
@@ -17,14 +18,14 @@ namespace ClassLibrary.Models
         public string Complaint { get; set; }
         public DateTime DateOrdered { get; set; }
         public bool ProductArrived { get; set; }
-        public Enums.DesiredSolutions DesiredSolution { get; set; }
+        public DesiredSolutions DesiredSolution { get; set; }
         public string GetDesiredSolution()
         {
             return DesiredSolution switch
             {
-                Enums.DesiredSolutions.CashRefund => "Cash refund",
-                Enums.DesiredSolutions.Replace => "Replacement",
-                Enums.DesiredSolutions.VoucherCard => "Voucher card",
+                DesiredSolutions.CashRefund => "Cash refund",
+                DesiredSolutions.Replace => "Replacement",
+                DesiredSolutions.VoucherCard => "Voucher card",
                 _ => "Voucher card"
             };
         }
