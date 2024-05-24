@@ -1,74 +1,14 @@
 ﻿using System;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using DataModels.Models;
-using DataModels.Builders;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ClassLibrary
+namespace LibraryUI
 {
-    public class UserInterface
+    public class SqlManagerUI
     {
         private readonly SqlManager SQL = new();
-        private static bool Auth = false;
-
-        public void Run()
-        {
-            while (!Auth)
-            {
-                Auth = Authenticate();
-            }
-
-            while (Auth)
-            {
-                Console.WriteLine("SQL(1)" +
-                    "\nCSV(2)" +
-                    "\nExit(any)");
-
-                char selection = Console.ReadKey(true).KeyChar;
-                switch (selection)
-                {
-                    case '1':
-                        RunSql();
-                        break;
-                    case '2':
-                        RunCSV();
-                        break;
-                    default:
-                        Auth = false;
-                        break;
-                };
-            }
-            Console.WriteLine("Logged out of the DataBase management Service.");
-        }
-
-        private static bool Authenticate()
-        {
-            int charCount = 0;
-            StringBuilder sb = new();
-            Console.Write("Enter the password. (hint: 123) ");
-            while (charCount < 3)
-            {
-                char key = Console.ReadKey(true).KeyChar;
-                charCount++;
-                sb.Append(key);
-            }
-
-            Console.WriteLine();
-
-            if (sb.ToString() == "123")
-            {
-                Console.WriteLine("Logged in successfully.");
-
-                return true;
-            }
-            Console.WriteLine("Wrong password.");
-
-            return false;
-        }
         public void RunSql()
         {
             bool exit = false;
@@ -228,56 +168,6 @@ namespace ClassLibrary
         public void SearchProduct()
         {
             // TODO - implement search product
-            throw new NotImplementedException();
-        }
-
-        public void RunCSV()
-        {
-            bool exit = false;
-            Console.WriteLine("Welcome to the CSV manager.");
-            Console.WriteLine("What records would you like to save in CSV?");
-            while (!exit)
-            {
-                Console.WriteLine("Save Products(1)"
-                    + "\nSave Inventories(2)"
-                    + "\nSave return product forms(3)"
-                    + "\nExit(any)");
-                char selection = Console.ReadKey(true).KeyChar;
-
-                switch (selection)
-                {
-                    case '1':
-                        SaveIntoCsvProducts();
-                        break;
-                    case '2':
-                        SaveIntoCsvInventories();
-                        break;
-                    case '3':
-                        SaveIntoCsvReturnProductForms();
-                        break;
-                    default:
-                    exit = true;
-                        break;
-                }
-            }
-        }
-
-        private void SaveIntoCsvProducts()
-        {
-            Console.WriteLine("Saving Products into CSV file.");
-
-            List<Product> products = SQL.ExecuteRetrieveAllProducts();
-
-            CsvManager.SaveProductsIntoCsv(products);
-        }
-
-        private void SaveIntoCsvInventories()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SaveIntoCsvReturnProductForms()
-        {
             throw new NotImplementedException();
         }
     }

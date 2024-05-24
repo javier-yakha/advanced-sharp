@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="32.0.3" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataModels\DataModels.csproj" />
+    <ProjectReference Include="..\ExportLibrary\ExportLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ namespace ClassLibrary
             try
             {
                 SqlCommand command = new("RETRIEVE_AllProducts", conn);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
 
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -41,15 +41,17 @@ namespace ClassLibrary
 
                 while (reader.Read())
                 {
-                    Product product = new();
-                    product.Id = reader.GetGuid(0).ToString();
-                    product.Title = reader.GetString(1);
-                    product.Price = reader.GetDecimal(2);
-                    product.DateAdded = reader.GetDateTime(3);
-                    product.Description = reader.GetString(4);
-                    product.DiscountPrice = reader.GetDecimal(5);
-                    product.Enabled = reader.GetBoolean(6);
-                    product.TotalStock = reader.GetInt32(7);
+                    Product product = new()
+                    {
+                        Id = reader.GetGuid(0).ToString(),
+                        Title = reader.GetString(1),
+                        Price = reader.GetDecimal(2),
+                        DateAdded = reader.GetDateTime(3),
+                        Description = reader.GetString(4),
+                        DiscountPrice = reader.GetDecimal(5),
+                        Enabled = reader.GetBoolean(6),
+                        TotalStock = reader.GetInt32(7)
+                    };
 
                     results.Add(product);
                 }
@@ -75,7 +77,7 @@ namespace ClassLibrary
                 {
 
                     SqlCommand insertProductCommand = new("dbo.INSERT_Product", connection);
-                    insertProductCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    insertProductCommand.CommandType = CommandType.StoredProcedure;
 
                     insertProductCommand.Parameters.AddWithValue("@Title", product.Title);
                     insertProductCommand.Parameters.AddWithValue("@Price", product.Price);
@@ -88,11 +90,11 @@ namespace ClassLibrary
                     }
 
                     SqlCommand productIdCmd = new("dbo.RETRIEVE_LatestProductId", connection);
-                    productIdCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    productIdCmd.CommandType = CommandType.StoredProcedure;
                     var latestProduct = productIdCmd.ExecuteScalar().ToString();
 
                     SqlCommand insertInventoryProductCommand = new("dbo.INSERT_InventoryProduct", connection);
-                    insertInventoryProductCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    insertInventoryProductCommand.CommandType = CommandType.StoredProcedure;
 
                     insertInventoryProductCommand.Parameters.AddWithValue("@ProductId", latestProduct);
 
@@ -124,9 +126,8 @@ namespace ClassLibrary
                     connection.Open();
 
                     SqlCommand retrieveAllCommand = new("RETRIEVE_AllProductStock", connection);
-                    retrieveAllCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    retrieveAllCommand.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = retrieveAllCommand.ExecuteReader();
-
 
                     if (!reader.HasRows)
                     {
@@ -136,10 +137,10 @@ namespace ClassLibrary
                     while (reader.Read())
                     {
                         string productTitle = reader.GetString(0);
-                        int totalSTock = reader.GetInt32(1);
+                        int totalStock = reader.GetInt32(1);
                         string lastUpdated = reader.GetDateTime(2).ToString();
                         Console.WriteLine($"\t{productTitle} ".PadRight(18)
-                            + $"current stock: {totalSTock}".PadRight(20)
+                            + $"current stock: {totalStock}".PadRight(20)
                             + $"- updated: {lastUpdated}".PadLeft(20));
                     }
 
@@ -162,14 +163,15 @@ namespace ClassLibrary
                     connection.Open();
 
                     SqlCommand retrieveIdCommand = new("RETRIEVE_ProductIdByTitle", connection);
-                    retrieveIdCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    retrieveIdCommand.CommandType = CommandType.StoredProcedure;
                     retrieveIdCommand.Parameters.AddWithValue("@Title", title);
                     var productId = retrieveIdCommand.ExecuteScalar().ToString();
 
                     SqlCommand updateCommand = new("UPDATE_ProductStockById", connection);
-                    updateCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    updateCommand.CommandType = CommandType.StoredProcedure;
                     updateCommand.Parameters.AddWithValue("@ProductId", productId);
                     updateCommand.Parameters.AddWithValue("@TotalStock", stock);
+                    
                     int rowsAffected = updateCommand.ExecuteNonQuery();
                     if (rowsAffected <= 0)
                     {
@@ -193,7 +195,7 @@ namespace ClassLibrary
                 try
                 {
                     SqlCommand retrieveNameCmd = new("RETRIEVE_AllProductTitles", connection);
-                    retrieveNameCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    retrieveNameCmd.CommandType = CommandType.StoredProcedure;
 
                     SqlDataReader reader = retrieveNameCmd.ExecuteReader();
 
@@ -221,7 +223,7 @@ namespace ClassLibrary
                 try
                 {
                     SqlCommand deleteProduct = new("DELETE_Product", connection);
-                    deleteProduct.CommandType = System.Data.CommandType.StoredProcedure;
+                    deleteProduct.CommandType = CommandType.StoredProcedure;
                     deleteProduct.Parameters.AddWithValue("@Title", title);
 
                     int rowsAffected = deleteProduct.ExecuteNonQuery();

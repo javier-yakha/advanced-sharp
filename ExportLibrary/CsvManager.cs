@@ -4,7 +4,7 @@ using System.Globalization;
 using DataModels.Models;
 using CsvHelper;
 
-namespace ClassLibrary
+namespace ExportLibrary
 {
     public static class CsvManager
     {
@@ -33,13 +33,14 @@ namespace ClassLibrary
             }
         }
 
+        // TODO - Create IModel to make this method usable for List<IModel>
         public static void SaveProductsIntoCsv(List<Product> productList)
         {
-            string folderPath = CreateDirectoryIfNotExists("Products");
+            string tableName = "Products";
+            string folderPath = CreateDirectoryIfNotExists(tableName);
             
-
             DateTime date = DateTime.Now;
-            string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_Products.csv";
+            string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_{tableName}.csv";
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -60,6 +61,15 @@ namespace ClassLibrary
             }
 
             return folderPath;
+        }
+
+        public static void SaveIntoCsvInventories()
+        {
+            throw new NotImplementedException();
+        }
+        public static void SaveIntoCsvReturnProductForms()
+        {
+            throw new NotImplementedException();
         }
     }
 }

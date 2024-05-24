@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUI", "advanced-sharp\ConsoleUI.csproj", "{CD1920C6-B580-4877-841B-2301813D1DBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{CD1920C6-B580-4877-841B-2301813D1DBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryUI", "ClassLibrary\LibraryUI.csproj", "{8EF57378-37D5-4397-A12A-0C267002D964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryUI", "LibraryUI\LibraryUI.csproj", "{8EF57378-37D5-4397-A12A-0C267002D964}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "db_taurius", "db_taurius\db_taurius.sqlproj", "{01D6593B-B50A-470C-BC24-B199D9734C33}"
 EndProject
