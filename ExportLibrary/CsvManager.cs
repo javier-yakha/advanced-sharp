@@ -33,10 +33,10 @@ namespace ClassLibrary
             }
         }
 
-        public static void SaveProductsIntoCsv()
+        public static void SaveProductsIntoCsv(List<Product> productList)
         {
             string folderPath = CreateDirectoryIfNotExists("Products");
-            List<Product> productList = GetProducts();
+            
 
             DateTime date = DateTime.Now;
             string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_Products.csv";
@@ -61,11 +61,5 @@ namespace ClassLibrary
 
             return folderPath;
         }
-        public static List<Product> GetProducts()
-        {
-            SqlManager sql = new();
-
-            return sql.ExecuteRetrieveAllProducts();
-        } 
     }
 }

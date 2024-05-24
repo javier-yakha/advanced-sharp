@@ -262,11 +262,13 @@ namespace ClassLibrary
             }
         }
 
-        private static void SaveIntoCsvProducts()
+        private void SaveIntoCsvProducts()
         {
             Console.WriteLine("Saving Products into CSV file.");
 
-            CsvManager.SaveProductsIntoCsv();
+            List<Product> products = SQL.ExecuteRetrieveAllProducts();
+
+            CsvManager.SaveProductsIntoCsv(products);
         }
 
         private void SaveIntoCsvInventories()

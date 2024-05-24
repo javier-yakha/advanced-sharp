@@ -2,7 +2,7 @@
 using System.ComponentModel.Design;
 using System.Text;
 
-namespace advanced_sharp
+namespace UIconsole
 {
     public class Program()
     {
