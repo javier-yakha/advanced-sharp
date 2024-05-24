@@ -44,7 +44,7 @@ namespace LibraryUI
             Console.WriteLine("Logged out of the DataBase management Service.");
         }
 
-        private static bool Authenticate()
+        private static bool Authenticate() 
         {
             int charCount = 0;
             StringBuilder sb = new();
