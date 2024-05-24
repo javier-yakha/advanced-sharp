@@ -9,7 +9,7 @@
     [Complaint] NVARCHAR(255) NOT NULL, 
     [DateOrdered] DATETIME NOT NULL, 
     [ProductArrived] BIT NOT NULL, 
-    [DesiredSolution] NVARCHAR(50) NOT NULL, 
+    [DesiredSolution] INT NOT NULL, 
     [DateReceived] DATETIME NULL, 
     CONSTRAINT [FK_ReturnProductForms_Products_Id] FOREIGN KEY (ProductId) REFERENCES Products(Id)
 )

@@ -60,7 +60,7 @@
   <ItemGroup>
     <Build Include="Products.sql" />
     <Build Include="INSERT_Product.sql" />
-    <Build Include="RETRIEVE_AllProducts.sql" />
+    <Build Include="RETRIEVE_AllProductsAndStock.sql" />
     <Build Include="Inventories.sql" />
     <Build Include="UPDATE_ProductStockById.sql" />
     <Build Include="INSERT_InventoryProduct.sql" />
@@ -72,6 +72,8 @@
     <Build Include="RETRIEVE_AllProductTitles.sql" />
     <Build Include="INSERT_ReturnProductForm.sql" />
     <Build Include="RETRIEVE_All_Inventories.sql" />
+    <Build Include="RETRIEVE_AllReturnProductForms.sql" />
+    <Build Include="RETRIEVE_AllProducts.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="db_taurius.refactorlog" />

@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using System.Configuration;
 using System.Data;
 using DataModels.Models;
+using DataModels.Enums;
 using System.Numerics;
 
 namespace LibraryUI
@@ -285,7 +286,7 @@ namespace LibraryUI
                     cmd.Parameters.AddWithValue("@Complaint", form.Complaint);
                     cmd.Parameters.AddWithValue("@DateOrdered", form.DateOrdered);
                     cmd.Parameters.AddWithValue("@ProductArrived", form.ProductArrived);
-                    cmd.Parameters.AddWithValue("@DesiredSolution", form.GetDesiredSolution());
+                    cmd.Parameters.AddWithValue("@DesiredSolution", (int)form.DesiredSolution);
                     cmd.Parameters.AddWithValue("@DateReceived", form.DateReceived is null ? DBNull.Value : form.DateReceived);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -310,7 +311,7 @@ namespace LibraryUI
         public async Task<List<ReturnProductForm>> ExecuteRetrieveAllReturnProductForms()
         {
             List<ReturnProductForm> returnProductForms = new();
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new(ConnectionString))
             {
                 await connection.OpenAsync();
                 try
@@ -332,17 +333,22 @@ namespace LibraryUI
                             Complaint = reader.GetString(6),
                             DateOrdered = reader.GetDateTime(7),
                             ProductArrived = reader.GetBoolean(8),
-                            DesiredSolution = reader.GetString(9),
+                            DesiredSolution = (DesiredSolutions)reader.GetInt32(9),
                             DateReceived = reader.GetDateTime(10)
                         };
+                        returnProductForms.Add(returnProductForm);
                     }
 
                     await connection.CloseAsync();
+
+                    return returnProductForms;
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
                     await connection.CloseAsync();
+
+                    return returnProductForms;
                 }
             }
         }

@@ -7,7 +7,7 @@
 	@Complaint nvarchar(50),
 	@DateOrdered datetime,
 	@ProductArrived bit,
-	@DesiredSolution nvarchar(50),
+	@DesiredSolution int,
 	@DateReceived datetime NULL
 AS
 	INSERT INTO ReturnProductForms
