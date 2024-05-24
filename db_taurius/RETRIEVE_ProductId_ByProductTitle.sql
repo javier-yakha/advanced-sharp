@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[RETRIEVE_ProductIdByTitle]
+﻿CREATE PROCEDURE [dbo].[RETRIEVE_ProductId_ByProductTitle]
 	@Title nvarchar(50)
 AS
 	SELECT TOP 1 Id 

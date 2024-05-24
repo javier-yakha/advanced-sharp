@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[RETRIEVE_AllProducts]
+﻿CREATE PROCEDURE [dbo].[RETRIEVE_All_Products]
 AS
 	SELECT Id, Title, Price, DateAdded, Description, DiscountPrice, Enabled
 	FROM Products

@@ -21,19 +21,19 @@ namespace LibraryUI
             ConnectionString = "Data Source=DESKTOP-SIE9983;Initial Catalog=db_taurius;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0";
         }
         /// <summary>
-        /// Retrieves all the products from the database.
+        /// Retrieves all the <see cref="Product"/> entries from the database.
         /// If the stock value is needed together,
-        /// a boolean value can be given to determine the case.
+        /// a <see cref="bool"/> value can be given to determine the case.
         /// </summary>
         /// <param name="stock">Determines if the Total Stock value is passed along.
-        /// True to add stock.
-        /// False to leave it as it is.</param>
-        /// <returns>A List of every Product in the database, optionally together with it's stock.</returns>
+        /// <see langword="true"/> to add stock.
+        /// <see langword="false"/> to leave it as it is.</param>
+        /// <returns>A <see cref="List{T}"/> of every <see cref="Product"/> in the database, optionally together with it's stock.</returns>
         public async Task<List<Product>> ExecuteRetrieveAllProducts(bool stock)
         {
             List<Product> results = [];
 
-            string cmdText = "RETRIEVE_AllProducts" + (stock ? "AndStock" : "");
+            string cmdText = "RETRIEVE_All_Products" + (stock ? "AndStock" : "");
             using SqlConnection conn = new(ConnectionString);
             await conn.OpenAsync();
             try
@@ -64,7 +64,7 @@ namespace LibraryUI
                     
                     results.Add(product);
                 }
-
+                await reader.CloseAsync();
                 await conn.CloseAsync();
 
                 return results;
@@ -99,11 +99,11 @@ namespace LibraryUI
                         return false;
                     }
 
-                    SqlCommand productIdCmd = new("dbo.RETRIEVE_LatestProductId", connection);
+                    SqlCommand productIdCmd = new("dbo.RETRIEVE_Latest_ProductId", connection);
                     productIdCmd.CommandType = CommandType.StoredProcedure;
                     var latestProduct = productIdCmd.ExecuteScalar().ToString();
 
-                    SqlCommand insertInventoryProductCommand = new("dbo.INSERT_InventoryProduct", connection);
+                    SqlCommand insertInventoryProductCommand = new("dbo.INSERT_InventoryProduct_ByProductId", connection);
                     insertInventoryProductCommand.CommandType = CommandType.StoredProcedure;
 
                     insertInventoryProductCommand.Parameters.AddWithValue("@ProductId", latestProduct);
@@ -127,6 +127,44 @@ namespace LibraryUI
             }
         }
 
+        public async Task<List<Inventory>> ExecuteRetrieveAllInventories()
+        {
+            List<Inventory> inventoryList = new();
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    SqlCommand cmd = new("RETRIEVE_All_Inventories", connection);
+
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
+                    {
+                        Inventory inventory = new();
+                        inventory.Id = reader.GetGuid(0).ToString();
+                        inventory.ProductId = reader.GetGuid(1).ToString();
+                        inventory.LastUpdated = reader.GetDateTime(2);
+                        inventory.TotalStock = reader.GetInt32(3);
+
+                        inventoryList.Add(inventory);
+                    }
+
+                    await reader.CloseAsync();
+                    await connection.CloseAsync();
+
+                    return inventoryList;
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                    await connection.CloseAsync();
+
+                    return inventoryList;
+                }
+            }
+        }
+
         public void RetrieveProductStock()
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
@@ -135,7 +173,7 @@ namespace LibraryUI
                 {
                     connection.Open();
 
-                    SqlCommand retrieveAllCommand = new("RETRIEVE_AllProductStock", connection);
+                    SqlCommand retrieveAllCommand = new("RETRIEVE_All_ProductStock", connection);
                     retrieveAllCommand.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = retrieveAllCommand.ExecuteReader();
 
@@ -172,12 +210,12 @@ namespace LibraryUI
                 {
                     connection.Open();
 
-                    SqlCommand retrieveIdCommand = new("RETRIEVE_ProductIdByTitle", connection);
+                    SqlCommand retrieveIdCommand = new("RETRIEVE_ProductId_ByProductTitle", connection);
                     retrieveIdCommand.CommandType = CommandType.StoredProcedure;
                     retrieveIdCommand.Parameters.AddWithValue("@Title", title);
                     string? productId = retrieveIdCommand.ExecuteScalar().ToString();
 
-                    SqlCommand updateCommand = new("UPDATE_ProductStockById", connection);
+                    SqlCommand updateCommand = new("UPDATE_ProductStock_ByProductId", connection);
                     updateCommand.CommandType = CommandType.StoredProcedure;
                     updateCommand.Parameters.AddWithValue("@ProductId", productId);
                     updateCommand.Parameters.AddWithValue("@TotalStock", stock);
@@ -204,7 +242,7 @@ namespace LibraryUI
                 connection.Open();
                 try
                 {
-                    SqlCommand retrieveNameCmd = new("RETRIEVE_AllProductTitles", connection);
+                    SqlCommand retrieveNameCmd = new("RETRIEVE_All_ProductTitles", connection);
                     retrieveNameCmd.CommandType = CommandType.StoredProcedure;
 
                     SqlDataReader reader = retrieveNameCmd.ExecuteReader();
@@ -232,7 +270,7 @@ namespace LibraryUI
                 connection.Open();
                 try
                 {
-                    SqlCommand deleteProduct = new("DELETE_Product", connection);
+                    SqlCommand deleteProduct = new("DELETE_Product_ByTitle", connection);
                     deleteProduct.CommandType = CommandType.StoredProcedure;
                     deleteProduct.Parameters.AddWithValue("@Title", title);
 
@@ -259,7 +297,7 @@ namespace LibraryUI
                 try
                 {
                     connection.Open();
-                    SqlCommand cmd = new("RETRIEVE_ProductIdByTitle", connection);
+                    SqlCommand cmd = new("RETRIEVE_ProductId_ByProductTitle", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@title", title);
 
@@ -326,7 +364,7 @@ namespace LibraryUI
                 await connection.OpenAsync();
                 try
                 {
-                    SqlCommand cmd = new("RETRIEVE_AllReturnProductForms", connection);
+                    SqlCommand cmd = new("RETRIEVE_All_ReturnProductForms", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();

@@ -34,7 +34,6 @@ namespace ExportLibrary
             }
         }
 
-        // TODO - Create IModel to make this method usable for List<IModel>
         public static void SaveTableRowsIntoCsv(List<IDataBaseModel> tableRows, string tableName)
         {
             string folderPath = CreateDirectoryIfNotExists(tableName);

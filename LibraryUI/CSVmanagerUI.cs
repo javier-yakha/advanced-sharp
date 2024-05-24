@@ -55,11 +55,11 @@ namespace LibraryUI
             CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Products");
         }
 
-        private void SaveIntoCsvInventories()
+        private async void SaveIntoCsvInventories()
         {
             Console.WriteLine("Saving inventories into CSV file.");
 
-            List<Inventory> inventories = SQL.ExecuteRetrieveAllInventories();
+            List<Inventory> inventories = await SQL.ExecuteRetrieveAllInventories();
             List<IDataBaseModel> dataBaseModels = new(inventories);
 
             CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Inventories");

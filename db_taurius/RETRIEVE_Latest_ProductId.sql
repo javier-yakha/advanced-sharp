@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[RETRIEVE_LatestProductId]
+﻿CREATE PROCEDURE [dbo].[RETRIEVE_Latest_ProductId]
 AS
 	SELECT TOP 1 Id 
 	FROM Products

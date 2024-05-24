@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[RETRIEVE_AllProductStock]
+﻿CREATE PROCEDURE [dbo].[RETRIEVE_All_ProductStock]
 AS
 	SELECT Products.Title, Inventories.TotalStock, Inventories.LastUpdated 
 	FROM Inventories

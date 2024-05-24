@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[UPDATE_ProductStockById]
+﻿CREATE PROCEDURE [dbo].[UPDATE_ProductStock_ByProductId]
 	@ProductId uniqueidentifier,
 	@TotalStock int
 AS

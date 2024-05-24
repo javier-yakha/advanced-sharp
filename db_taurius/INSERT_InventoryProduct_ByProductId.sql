@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[INSERT_InventoryProduct]
+﻿CREATE PROCEDURE [dbo].[INSERT_InventoryProduct_ByProductId]
 	@ProductId uniqueidentifier
 AS
 	INSERT INTO Inventories (Id, ProductId, LastUpdated, TotalStock)

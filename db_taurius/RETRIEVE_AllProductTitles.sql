@@ -1,4 +1,0 @@
-﻿CREATE PROCEDURE [dbo].[RETRIEVE_AllProductTitles]
-AS
-	SELECT Title FROM Products
-RETURN 0

@@ -60,20 +60,20 @@
   <ItemGroup>
     <Build Include="Products.sql" />
     <Build Include="INSERT_Product.sql" />
-    <Build Include="RETRIEVE_AllProductsAndStock.sql" />
+    <Build Include="RETRIEVE_All_ProductsAndStock.sql" />
     <Build Include="Inventories.sql" />
-    <Build Include="UPDATE_ProductStockById.sql" />
-    <Build Include="INSERT_InventoryProduct.sql" />
-    <Build Include="RETRIEVE_LatestProductId.sql" />
-    <Build Include="RETRIEVE_ProductIdByTitle.sql" />
-    <Build Include="RETRIEVE_AllProductStock.sql" />
-    <Build Include="DELETE_Product.sql" />
+    <Build Include="UPDATE_ProductStock_ByProductId.sql" />
+    <Build Include="INSERT_InventoryProduct_ByProductId.sql" />
+    <Build Include="RETRIEVE_Latest_ProductId.sql" />
+    <Build Include="RETRIEVE_ProductId_ByProductTitle.sql" />
+    <Build Include="RETRIEVE_All_ProductStock.sql" />
+    <Build Include="DELETE_Product_ByTitle.sql" />
     <Build Include="ReturnProductForms.sql" />
-    <Build Include="RETRIEVE_AllProductTitles.sql" />
+    <Build Include="RETRIEVE_All_ProductTitles.sql" />
     <Build Include="INSERT_ReturnProductForm.sql" />
     <Build Include="RETRIEVE_All_Inventories.sql" />
-    <Build Include="RETRIEVE_AllReturnProductForms.sql" />
-    <Build Include="RETRIEVE_AllProducts.sql" />
+    <Build Include="RETRIEVE_All_ReturnProductForms.sql" />
+    <Build Include="RETRIEVE_All_Products.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="db_taurius.refactorlog" />
