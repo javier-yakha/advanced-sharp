@@ -1,4 +1,4 @@
-﻿using ClassLibrary;
+﻿using LibraryUI;
 using System.ComponentModel.Design;
 using System.Text;
 

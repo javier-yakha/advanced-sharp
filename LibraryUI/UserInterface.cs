@@ -9,7 +9,7 @@ using ExportLibrary;
 using DataModels.Models;
 using DataModels.Builders;
 
-namespace ClassLibrary
+namespace LibraryUI
 {
     public class UserInterface
     {

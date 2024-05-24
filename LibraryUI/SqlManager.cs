@@ -10,7 +10,7 @@ using ClassLibrary;
 using DataModels.Models;
 using System.Numerics;
 
-namespace ClassLibrary
+namespace LibraryUI
 {
     public class SqlManager
     {
