@@ -70,25 +70,25 @@ namespace LibraryUI
             Console.WriteLine();
         }
 
-        public void AddProduct()
+        public async void AddProduct()
         {
 
             Console.WriteLine("Adding a new Product.");
 
             Product product = new ProductBuilder().CreateProduct();
 
-            bool result = SQL.ExecuteAddProduct(product);
+            bool result = await SQL.ExecuteAddProduct(product);
 
             // TODO - Implement check
             Console.WriteLine("Product added successfully.");
         }
 
-        public void UpdateProductStock()
+        public async void UpdateProductStock()
         {
             Console.WriteLine("Updating stock for a product.");
             Console.WriteLine("What product would you like to update?");
 
-            SQL.RetrieveProductStock();
+            await SQL.RetrieveProductStock();
 
             string? title = null;
             while (title is null)
@@ -110,15 +110,15 @@ namespace LibraryUI
                 stockStatus = stockIntStatus && stock >= 0;
             }
 
-            SQL.ExecuteUpdateProductStock(title, stock);
+            await SQL.ExecuteUpdateProductStock(title, stock);
         }
 
-        public void DeleteProduct()
+        public async void DeleteProduct()
         {
             Console.WriteLine("Deleting a product from the database.");
             Console.WriteLine("What product would you like to delete?");
 
-            SQL.RetrieveProductTitles();
+            await SQL.RetrieveProductTitles();
 
             string? title = null;
             while (title is null)
@@ -133,15 +133,15 @@ namespace LibraryUI
                 Console.WriteLine("Invalid title, try again.");
             }
 
-            SQL.DeleteProduct(title);
+            await SQL.DeleteProduct(title);
         }
 
-        public void ReturnProductForm()
+        public async void ReturnProductForm()
         {
             Console.WriteLine("Returning a product.");
             Console.WriteLine("Please choose the product to return.");
 
-            SQL.RetrieveProductTitles();
+            await SQL.RetrieveProductTitles();
 
             string? title = null;
             while (title is null)
@@ -149,7 +149,7 @@ namespace LibraryUI
                 title = Console.ReadLine();
             }
             
-            string? productId = SQL.ReturnProductIdByTitle(title);
+            string? productId = await SQL.ReturnProductIdByTitle(title);
 
             if (productId is null)
             {
@@ -163,7 +163,7 @@ namespace LibraryUI
 
             ReturnProductForm form = formBuilder.CreateReturnProductForm();
 
-            SQL.ExecuteReturnProduct(form);
+            await SQL.ExecuteReturnProduct(form);
         }
 
         public void SearchProduct()

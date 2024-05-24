@@ -47,32 +47,32 @@ namespace LibraryUI
 
         private async void SaveIntoCsvProducts()
         {
-            Console.WriteLine("Saving Products into CSV file.");
+            string name = "Products";
+            Console.WriteLine($"Saving {name} into CSV file.");
 
             List<Product> products = await SQL.ExecuteRetrieveAllProducts(false);
-            List<IDataBaseModel> dataBaseModels = new(products);
 
-            CsvManager.SaveTableRowsIntoCsv(products, "Products");
+            CsvManager.SaveTableRowsIntoCsv(products, name);
         }
 
         private async void SaveIntoCsvInventories()
         {
-            Console.WriteLine("Saving inventories into CSV file.");
+            string name = "Inventories";
+            Console.WriteLine($"Saving {name} into CSV file.");
 
             List<Inventory> inventories = await SQL.ExecuteRetrieveAllInventories();
-            List<IDataBaseModel> dataBaseModels = new(inventories);
 
-            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Inventories");
+            CsvManager.SaveTableRowsIntoCsv(inventories, name);
         }
 
         private async void SaveIntoCsvReturnProductForms()
         {
-            Console.WriteLine("Saving return product forms into CSV file.");
+            string name = "ReturnProductForms";
+            Console.WriteLine($"Saving {name} into CSV file.");
 
             List<ReturnProductForm> returnProductForms = await SQL.ExecuteRetrieveAllReturnProductForms();
-            List<IDataBaseModel> dataBaseModels = new(returnProductForms);
 
-            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "ReturnProductForms");
+            CsvManager.SaveTableRowsIntoCsv(returnProductForms, name);
         }
     }
 }

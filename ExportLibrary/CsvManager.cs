@@ -34,7 +34,7 @@ namespace ExportLibrary
             }
         }
 
-        public static void SaveTableRowsIntoCsv(List<IDataBaseModel> tableRows, string tableName)
+        public static void SaveTableRowsIntoCsv(List<Product> tableRows, string tableName)
         {
             string filePath = CreateFilePath(tableName);
 
@@ -46,6 +46,31 @@ namespace ExportLibrary
             csvWriter.Dispose();
             writer.Dispose();
         }
+        public static void SaveTableRowsIntoCsv(List<Inventory> tableRows, string tableName)
+        {
+            string filePath = CreateFilePath(tableName);
+
+            var writer = new StreamWriter(filePath);
+            var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            csvWriter.WriteRecords(tableRows);
+
+            csvWriter.Dispose();
+            writer.Dispose();
+        }
+        public static void SaveTableRowsIntoCsv(List<ReturnProductForm> tableRows, string tableName)
+        {
+            string filePath = CreateFilePath(tableName);
+
+            var writer = new StreamWriter(filePath);
+            var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            csvWriter.WriteRecords(tableRows);
+
+            csvWriter.Dispose();
+            writer.Dispose();
+        }
+
         private static string CreateFilePath(string tableName)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\CSVdump\\{tableName}";
