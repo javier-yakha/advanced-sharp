@@ -3,6 +3,7 @@ using DataModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace LibraryUI
     public class SqlManagerUI
     {
         private readonly SqlManager SQL = new();
-        public void RunSql()
+        public async Task RunSql()
         {
             bool exit = false;
             Console.WriteLine("Welcome to the SQL manager.");
@@ -29,39 +30,38 @@ namespace LibraryUI
                 switch (selection)
                 {
                     case '1':
-                        ShowAllProducts();
+                        await ShowAllProducts();
                         break;
                     case '2':
-                        AddProduct();
+                        await AddProduct();
                         break;
                     case '3':
-                        UpdateProductStock();
+                        await UpdateProductStock();
                         break;
                     case '4':
-                        DeleteProduct();
+                        await DeleteProduct();
                         break;
                     case '5':
-                        ReturnProductForm();
+                        await ReturnProductForm();
                         break;
                     case '6':
-                        SearchProduct();
+                        await SearchProduct();
                         break;
                     default:
+                        await PreventClose();
                         exit = true;
                         break;
                 }
             }
         }
 
-        public async void ShowAllProducts()
+        public async Task ShowAllProducts()
         {
             List<Product> products = await SQL.ExecuteRetrieveAllProducts(true);
 
             if (products.Count == 0)
             {
                 Console.WriteLine("Empty table <Products>");
-
-                return;
             }
             foreach (Product product in products)
             {
@@ -70,20 +70,18 @@ namespace LibraryUI
             Console.WriteLine();
         }
 
-        public async void AddProduct()
+        public async Task AddProduct()
         {
-
             Console.WriteLine("Adding a new Product.");
 
             Product product = new ProductBuilder().CreateProduct();
 
-            bool result = await SQL.ExecuteAddProduct(product);
+            await SQL.ExecuteAddProduct(product);
 
-            // TODO - Implement check
             Console.WriteLine("Product added successfully.");
         }
 
-        public async void UpdateProductStock()
+        public async Task UpdateProductStock()
         {
             Console.WriteLine("Updating stock for a product.");
             Console.WriteLine("What product would you like to update?");
@@ -113,7 +111,7 @@ namespace LibraryUI
             await SQL.ExecuteUpdateProductStock(title, stock);
         }
 
-        public async void DeleteProduct()
+        public async Task DeleteProduct()
         {
             Console.WriteLine("Deleting a product from the database.");
             Console.WriteLine("What product would you like to delete?");
@@ -136,12 +134,13 @@ namespace LibraryUI
             await SQL.DeleteProduct(title);
         }
 
-        public async void ReturnProductForm()
+        public async Task ReturnProductForm()
         {
             Console.WriteLine("Returning a product.");
-            Console.WriteLine("Please choose the product to return.");
 
             await SQL.RetrieveProductTitles();
+
+            Console.WriteLine("Please choose the product to return.");
 
             string? title = null;
             while (title is null)
@@ -166,7 +165,7 @@ namespace LibraryUI
             await SQL.ExecuteReturnProduct(form);
         }
 
-        public void SearchProduct()
+        public async Task SearchProduct()
         {
             throw new NotImplementedException();
             // TODO - implement search product
@@ -180,6 +179,11 @@ namespace LibraryUI
             }
             var productList = SQL.ExecuteRetrieveAllProductsByName();
             */
+        }
+        public Task PreventClose()
+        {
+            Console.WriteLine("Prevent close");
+            return Task.CompletedTask;
         }
     }
 }

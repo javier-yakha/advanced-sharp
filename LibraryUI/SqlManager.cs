@@ -34,57 +34,66 @@ namespace LibraryUI
             List<Product> results = [];
 
             string cmdText = "RETRIEVE_All_Products" + (stock ? "AndStock" : "");
-            using SqlConnection conn = new(ConnectionString);
-            try
+            using (SqlConnection conn = new(ConnectionString))
             {
-                await conn.OpenAsync();
-                SqlCommand command = new($"{cmdText}", conn);
-                command.CommandType = CommandType.StoredProcedure;
-
-                SqlDataReader reader = await command.ExecuteReaderAsync();
-
-                if (!reader.HasRows)
+                try
                 {
+                    await conn.OpenAsync();
+                    SqlCommand command = new($"{cmdText}", conn);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (!reader.HasRows)
+                    {
+                        return results;
+                    }
+
+                    while (await reader.ReadAsync())
+                    {
+                        Product product = new()
+                        {
+                            Id = reader.GetGuid(0).ToString(),
+                            Title = reader.GetString(1),
+                            Price = reader.GetDecimal(2),
+                            DateAdded = reader.GetDateTime(3),
+                            Description = reader.GetString(4),
+                            DiscountPrice = reader.GetDecimal(5),
+                            Enabled = reader.GetBoolean(6),
+                            TotalStock = stock ? reader.GetInt32(7) : null
+                        };
+                    
+                        results.Add(product);
+                    }
+                    await reader.CloseAsync();
+                    await conn.CloseAsync();
+
                     return results;
                 }
-
-                while (await reader.ReadAsync())
+                catch (SqlException e)
                 {
-                    Product product = new()
-                    {
-                        Id = reader.GetGuid(0).ToString(),
-                        Title = reader.GetString(1),
-                        Price = reader.GetDecimal(2),
-                        DateAdded = reader.GetDateTime(3),
-                        Description = reader.GetString(4),
-                        DiscountPrice = reader.GetDecimal(5),
-                        Enabled = reader.GetBoolean(6),
-                        TotalStock = stock ? reader.GetInt32(7) : null
-                    };
-                    
-                    results.Add(product);
+                    await conn.CloseAsync();
+                    Console.WriteLine(e.Message);
+
+                    return results;
                 }
-                await reader.CloseAsync();
-                await conn.CloseAsync();
+                catch (Exception e)
+                {
+                    await conn.CloseAsync();
+                    Console.WriteLine(e.Message);
 
-                return results;
-            }
-            catch (SqlException e)
-            {
-                conn.Close();
-                Console.WriteLine(e.Message);
-
-                return results;
+                    return results;
+                }
             }
         }
 
-        public async Task<bool> ExecuteAddProduct(Product product)
+        public async Task ExecuteAddProduct(Product product)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
-                await connection.OpenAsync();
                 try
                 {
+                    await connection.OpenAsync();
 
                     SqlCommand insertProductCommand = new("dbo.INSERT_Product", connection);
                     insertProductCommand.CommandType = CommandType.StoredProcedure;
@@ -96,37 +105,26 @@ namespace LibraryUI
                     int rowsAffected = await insertProductCommand.ExecuteNonQueryAsync();
                     if (rowsAffected <= 0)
                     {
-                        return false;
+                        return;
                     }
 
                     SqlCommand productIdCmd = new("dbo.RETRIEVE_Latest_ProductId", connection);
                     productIdCmd.CommandType = CommandType.StoredProcedure;
-                    var latestProductTask = await productIdCmd.ExecuteScalarAsync();
-                    string? latestProduct = latestProductTask?.ToString();
+                    var latestProduct = productIdCmd.ExecuteScalarAsync();
 
                     SqlCommand insertInventoryProductCommand = new("dbo.INSERT_InventoryProduct_ByProductId", connection);
                     insertInventoryProductCommand.CommandType = CommandType.StoredProcedure;
 
-                    insertInventoryProductCommand.Parameters.AddWithValue("@ProductId", latestProduct);
+                    insertInventoryProductCommand.Parameters.AddWithValue("@ProductId", (await latestProduct)?.ToString());
 
-                    int rowsAffect = await insertInventoryProductCommand.ExecuteNonQueryAsync();
-                    if (rowsAffected <= 0)
-                    {
-                        await connection.CloseAsync();
-
-                        return false;
-                    }
+                    await insertInventoryProductCommand.ExecuteNonQueryAsync();
 
                     await connection.CloseAsync();
-
-                    return true;
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.ErrorCode + e.Message);
                     await connection.CloseAsync();
-
-                    return false;
                 }
             }
         }
@@ -384,7 +382,7 @@ namespace LibraryUI
                         ReturnProductForm returnProductForm = new()
                         {
                             Id = reader.GetGuid(0).ToString(),
-                            ProductId = reader.GetString(1),
+                            ProductId = reader.GetGuid(1).ToString(),
                             Used = reader.IsDBNull(2) ? null : reader.GetBoolean(2),
                             DamagedOnArrival = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
                             Working = reader.IsDBNull(4) ? null : reader.GetBoolean(4),

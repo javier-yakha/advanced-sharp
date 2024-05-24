@@ -14,7 +14,7 @@ namespace LibraryUI
         private readonly SqlManagerUI SqlUI = new();
         private readonly CsvManagerUI CsvUI = new();
 
-        public void Run()
+        public async Task Run()
         {
             while (!Auth)
             {
@@ -26,15 +26,14 @@ namespace LibraryUI
                 Console.WriteLine("SQL(1)" +
                     "\nCSV(2)" +
                     "\nExit(any)");
-
                 char selection = Console.ReadKey(true).KeyChar;
                 switch (selection)
                 {
                     case '1':
-                        SqlUI.RunSql();
+                        await SqlUI.RunSql();
                         break;
                     case '2':
-                        CsvUI.RunCsv();
+                        await CsvUI.RunCsv();
                         break;
                     default:
                         Auth = false;

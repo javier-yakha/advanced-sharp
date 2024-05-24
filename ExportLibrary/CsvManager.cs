@@ -34,38 +34,38 @@ namespace ExportLibrary
             }
         }
 
-        public static void SaveTableRowsIntoCsv(List<Product> tableRows, string tableName)
+        public static async Task SaveTableRowsIntoCsv(List<Product> tableRows, string tableName)
         {
             string filePath = CreateFilePath(tableName);
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csvWriter.WriteRecords(tableRows);
+            await csvWriter.WriteRecordsAsync(tableRows);
 
             csvWriter.Dispose();
             writer.Dispose();
         }
-        public static void SaveTableRowsIntoCsv(List<Inventory> tableRows, string tableName)
+        public static async Task SaveTableRowsIntoCsv(List<Inventory> tableRows, string tableName)
         {
             string filePath = CreateFilePath(tableName);
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csvWriter.WriteRecords(tableRows);
+            await csvWriter.WriteRecordsAsync(tableRows);
 
             csvWriter.Dispose();
             writer.Dispose();
         }
-        public static void SaveTableRowsIntoCsv(List<ReturnProductForm> tableRows, string tableName)
+        public static async Task SaveTableRowsIntoCsv(List<ReturnProductForm> tableRows, string tableName)
         {
             string filePath = CreateFilePath(tableName);
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csvWriter.WriteRecords(tableRows);
+            await csvWriter.WriteRecordsAsync(tableRows);
 
             csvWriter.Dispose();
             writer.Dispose();

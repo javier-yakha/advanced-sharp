@@ -14,7 +14,7 @@ namespace LibraryUI
         private readonly SqlManager SQL = new();
         // private readonly CsvManager CSV = new();
 
-        public void RunCsv()
+        public async Task RunCsv()
         {
             bool exit = false;
             Console.WriteLine("Welcome to the CSV manager.");
@@ -30,49 +30,49 @@ namespace LibraryUI
                 switch (selection)
                 {
                     case '1':
-                        SaveIntoCsvProducts();
+                        await SaveIntoCsvProducts();
                         break;
                     case '2':
-                        SaveIntoCsvInventories();
+                        await SaveIntoCsvInventories();
                         break;
                     case '3':
-                        SaveIntoCsvReturnProductForms();
+                        await SaveIntoCsvReturnProductForms();
                         break;
                     default:
-                    exit = true;
+                        exit = true;
                         break;
                 }
             }
         }
 
-        private async void SaveIntoCsvProducts()
+        private async Task SaveIntoCsvProducts()
         {
             string name = "Products";
             Console.WriteLine($"Saving {name} into CSV file.");
 
             List<Product> products = await SQL.ExecuteRetrieveAllProducts(false);
 
-            CsvManager.SaveTableRowsIntoCsv(products, name);
+            await CsvManager.SaveTableRowsIntoCsv(products, name);
         }
 
-        private async void SaveIntoCsvInventories()
+        private async Task SaveIntoCsvInventories()
         {
             string name = "Inventories";
             Console.WriteLine($"Saving {name} into CSV file.");
 
             List<Inventory> inventories = await SQL.ExecuteRetrieveAllInventories();
 
-            CsvManager.SaveTableRowsIntoCsv(inventories, name);
+            await CsvManager.SaveTableRowsIntoCsv(inventories, name);
         }
 
-        private async void SaveIntoCsvReturnProductForms()
+        private async Task SaveIntoCsvReturnProductForms()
         {
             string name = "ReturnProductForms";
             Console.WriteLine($"Saving {name} into CSV file.");
 
             List<ReturnProductForm> returnProductForms = await SQL.ExecuteRetrieveAllReturnProductForms();
 
-            CsvManager.SaveTableRowsIntoCsv(returnProductForms, name);
+            await CsvManager.SaveTableRowsIntoCsv(returnProductForms, name);
         }
     }
 }

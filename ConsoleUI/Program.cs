@@ -6,10 +6,10 @@ namespace UIconsole
 {
     public class Program()
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             UserInterface ui = new();
-            ui.Run();
+            await ui.Run();
         }
     }
 }
