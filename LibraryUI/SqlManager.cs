@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Configuration;
 using System.Data;
-using ClassLibrary;
 using DataModels.Models;
 using System.Numerics;
 
@@ -165,7 +164,7 @@ namespace LibraryUI
                     SqlCommand retrieveIdCommand = new("RETRIEVE_ProductIdByTitle", connection);
                     retrieveIdCommand.CommandType = CommandType.StoredProcedure;
                     retrieveIdCommand.Parameters.AddWithValue("@Title", title);
-                    var productId = retrieveIdCommand.ExecuteScalar().ToString();
+                    string? productId = retrieveIdCommand.ExecuteScalar().ToString();
 
                     SqlCommand updateCommand = new("UPDATE_ProductStockById", connection);
                     updateCommand.CommandType = CommandType.StoredProcedure;

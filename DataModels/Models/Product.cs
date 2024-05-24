@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataModels.Models
 {
-    public class Product
+    public class Product : IDataBaseModel
     {
         public string Id { get; set; }
         public string Title { get; set; }

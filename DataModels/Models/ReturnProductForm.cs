@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataModels.Models
 {
-    public class ReturnProductForm
+    public class ReturnProductForm : IDataBaseModel
     {
         public string Id { get; set; }
         public string ProductId { get; set; }

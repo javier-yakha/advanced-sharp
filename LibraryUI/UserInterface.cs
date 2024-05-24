@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using ExportLibrary;
-using DataModels.Models;
-using DataModels.Builders;
 
 namespace LibraryUI
 {
     public class UserInterface
     {
         private static bool Auth = false;
+        private readonly SqlManagerUI SqlUI = new();
+        private readonly CsvManagerUI CsvUI = new();
 
         public void Run()
         {
@@ -32,10 +31,10 @@ namespace LibraryUI
                 switch (selection)
                 {
                     case '1':
-                        SqlManager.RunSql();
+                        SqlUI.RunSql();
                         break;
                     case '2':
-                        RunCSV();
+                        CsvUI.RunCsv();
                         break;
                     default:
                         Auth = false;

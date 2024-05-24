@@ -3,6 +3,7 @@ using System.IO;
 using System.Globalization;
 using DataModels.Models;
 using CsvHelper;
+using DataModels;
 
 namespace ExportLibrary
 {
@@ -34,9 +35,8 @@ namespace ExportLibrary
         }
 
         // TODO - Create IModel to make this method usable for List<IModel>
-        public static void SaveProductsIntoCsv(List<Product> productList)
+        public static void SaveTableRowsIntoCsv(List<IDataBaseModel> tableRows, string tableName)
         {
-            string tableName = "Products";
             string folderPath = CreateDirectoryIfNotExists(tableName);
             
             DateTime date = DateTime.Now;
@@ -45,7 +45,7 @@ namespace ExportLibrary
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csvWriter.WriteRecords(productList);
+            csvWriter.WriteRecords(tableRows);
 
             csvWriter.Dispose();
             writer.Dispose();

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DataModels.Builders;
+using DataModels.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,8 +75,7 @@ namespace LibraryUI
 
             Console.WriteLine("Adding a new Product.");
 
-            ProductBuilder productBuilder = new();
-            Product product = productBuilder.CreateProduct();
+            Product product = new ProductBuilder().CreateProduct();
 
             bool result = SQL.ExecuteAddProduct(product);
 
@@ -167,8 +168,17 @@ namespace LibraryUI
 
         public void SearchProduct()
         {
-            // TODO - implement search product
             throw new NotImplementedException();
+            Console.WriteLine("Searching a product.");
+            Console.WriteLine("Enter the product name to search.");
+            string? title = null;
+            while (title is null)
+            {
+                title = Console.ReadLine();
+            }
+            // TODO - implement search product
+            var productList = SQL.ExecuteRetrieveAllProductsByName();
+
         }
     }
 }

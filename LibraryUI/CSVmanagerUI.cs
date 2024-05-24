@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataModels.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace LibraryUI
 {
-    public class CSVmanagerUI
+    public class CsvManagerUI
     {
         private readonly SqlManager SQL = new();
 
-        public void RunCSV()
+        public void RunCsv()
         {
             bool exit = false;
             Console.WriteLine("Welcome to the CSV manager.");
