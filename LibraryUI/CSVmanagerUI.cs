@@ -52,7 +52,7 @@ namespace LibraryUI
             List<Product> products = await SQL.ExecuteRetrieveAllProducts(false);
             List<IDataBaseModel> dataBaseModels = new(products);
 
-            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Products");
+            CsvManager.SaveTableRowsIntoCsv(products, "Products");
         }
 
         private async void SaveIntoCsvInventories()

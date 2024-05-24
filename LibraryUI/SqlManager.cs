@@ -35,9 +35,9 @@ namespace LibraryUI
 
             string cmdText = "RETRIEVE_All_Products" + (stock ? "AndStock" : "");
             using SqlConnection conn = new(ConnectionString);
-            await conn.OpenAsync();
             try
             {
+                await conn.OpenAsync();
                 SqlCommand command = new($"{cmdText}", conn);
                 command.CommandType = CommandType.StoredProcedure;
 
@@ -78,11 +78,11 @@ namespace LibraryUI
             }
         }
 
-        public bool ExecuteAddProduct(Product product)
+        public async Task<bool> ExecuteAddProduct(Product product)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 try
                 {
 
@@ -93,7 +93,7 @@ namespace LibraryUI
                     insertProductCommand.Parameters.AddWithValue("@Price", product.Price);
                     insertProductCommand.Parameters.AddWithValue("@Description", product.Description is null ? DBNull.Value : product.Description);
 
-                    int rowsAffected = insertProductCommand.ExecuteNonQuery();
+                    int rowsAffected = await insertProductCommand.ExecuteNonQueryAsync();
                     if (rowsAffected <= 0)
                     {
                         return false;
@@ -101,27 +101,31 @@ namespace LibraryUI
 
                     SqlCommand productIdCmd = new("dbo.RETRIEVE_Latest_ProductId", connection);
                     productIdCmd.CommandType = CommandType.StoredProcedure;
-                    var latestProduct = productIdCmd.ExecuteScalar().ToString();
+                    var latestProductTask = await productIdCmd.ExecuteScalarAsync();
+                    string? latestProduct = latestProductTask?.ToString();
 
                     SqlCommand insertInventoryProductCommand = new("dbo.INSERT_InventoryProduct_ByProductId", connection);
                     insertInventoryProductCommand.CommandType = CommandType.StoredProcedure;
 
                     insertInventoryProductCommand.Parameters.AddWithValue("@ProductId", latestProduct);
 
-                    int rowsAffect = insertInventoryProductCommand.ExecuteNonQuery();
+                    int rowsAffect = await insertInventoryProductCommand.ExecuteNonQueryAsync();
                     if (rowsAffected <= 0)
                     {
-                        connection.Close();
+                        await connection.CloseAsync();
+
                         return false;
                     }
 
-                    connection.Close();
+                    await connection.CloseAsync();
+
                     return true;
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.ErrorCode + e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
+
                     return false;
                 }
             }
@@ -165,24 +169,24 @@ namespace LibraryUI
             }
         }
 
-        public void RetrieveProductStock()
+        public async Task RetrieveProductStock()
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     SqlCommand retrieveAllCommand = new("RETRIEVE_All_ProductStock", connection);
                     retrieveAllCommand.CommandType = CommandType.StoredProcedure;
-                    SqlDataReader reader = retrieveAllCommand.ExecuteReader();
+                    SqlDataReader reader = await retrieveAllCommand.ExecuteReaderAsync();
 
                     if (!reader.HasRows)
                     {
                         Console.WriteLine("No Products found.");
                         return;
                     }
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         string productTitle = reader.GetString(0);
                         int totalStock = reader.GetInt32(1);
@@ -192,67 +196,70 @@ namespace LibraryUI
                             + $"- updated: {lastUpdated}".PadLeft(20));
                     }
 
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
             }
         }
 
-        public void ExecuteUpdateProductStock(string title, int stock)
+        public async Task ExecuteUpdateProductStock(string title, int stock)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     SqlCommand retrieveIdCommand = new("RETRIEVE_ProductId_ByProductTitle", connection);
                     retrieveIdCommand.CommandType = CommandType.StoredProcedure;
                     retrieveIdCommand.Parameters.AddWithValue("@Title", title);
-                    string? productId = retrieveIdCommand.ExecuteScalar().ToString();
+
+                    var productIdTask = await retrieveIdCommand.ExecuteScalarAsync();
+                    string? productId = productIdTask?.ToString();
 
                     SqlCommand updateCommand = new("UPDATE_ProductStock_ByProductId", connection);
                     updateCommand.CommandType = CommandType.StoredProcedure;
                     updateCommand.Parameters.AddWithValue("@ProductId", productId);
                     updateCommand.Parameters.AddWithValue("@TotalStock", stock);
                     
-                    int rowsAffected = updateCommand.ExecuteNonQuery();
+                    int rowsAffected = await updateCommand.ExecuteNonQueryAsync();
                     if (rowsAffected <= 0)
                     {
                         Console.WriteLine("Query failed !!!! ABORT !!!");
                     }
 
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
             }
         }
-        public void RetrieveProductTitles()
+        public async Task RetrieveProductTitles()
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                connection.Open();
                 try
                 {
+                    await connection.OpenAsync();
+
                     SqlCommand retrieveNameCmd = new("RETRIEVE_All_ProductTitles", connection);
                     retrieveNameCmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlDataReader reader = retrieveNameCmd.ExecuteReader();
+                    SqlDataReader reader = await retrieveNameCmd.ExecuteReaderAsync();
 
                     if (!reader.HasRows)
                     {
                         Console.WriteLine("Table <Products> is empty.");
                         return;
                     }
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         Console.WriteLine(reader.GetString(0));
                     }
@@ -263,67 +270,71 @@ namespace LibraryUI
                 }
             }
         }
-        public void DeleteProduct(string title)
+        public async Task DeleteProduct(string title)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
-                connection.Open();
                 try
                 {
+                    await connection.OpenAsync();
+
                     SqlCommand deleteProduct = new("DELETE_Product_ByTitle", connection);
                     deleteProduct.CommandType = CommandType.StoredProcedure;
                     deleteProduct.Parameters.AddWithValue("@Title", title);
 
-                    int rowsAffected = deleteProduct.ExecuteNonQuery();
+                    int rowsAffected = await deleteProduct.ExecuteNonQueryAsync();
                     if (rowsAffected <= 0)
                     {
                         Console.WriteLine("Failed operation, /dev/sd* was deleted.");
                     }
 
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
             }
         }
 
-        public string? ReturnProductIdByTitle(string title)
+        public async Task<string?> ReturnProductIdByTitle(string title)
         {
             using (SqlConnection connection = new(ConnectionString))
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
+
                     SqlCommand cmd = new("RETRIEVE_ProductId_ByProductTitle", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@title", title);
 
-                    string? productId = cmd.ExecuteScalar().ToString();
+                    var productIdTask = await cmd.ExecuteScalarAsync();
+                    string? productId = productIdTask?.ToString();
 
-                    connection.Close();
+                    await connection.CloseAsync();
 
                     return productId;
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
 
                     return null;
                 }
             }
         }
         
-        public void ExecuteReturnProduct(ReturnProductForm form)
+        public async Task ExecuteReturnProduct(ReturnProductForm form)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
+
                     SqlCommand cmd = new SqlCommand("INSERT_ReturnProductForm", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ProductId", form.ProductId is null ? DBNull.Value : form.ProductId);
@@ -337,7 +348,7 @@ namespace LibraryUI
                     cmd.Parameters.AddWithValue("@DesiredSolution", (int)form.DesiredSolution);
                     cmd.Parameters.AddWithValue("@DateReceived", form.DateReceived is null ? DBNull.Value : form.DateReceived);
 
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                    int rowsAffected = await cmd.ExecuteNonQueryAsync();
                     if (rowsAffected > 0)
                     {
                         Console.WriteLine("Return product form inserted correctly.");
@@ -346,12 +357,12 @@ namespace LibraryUI
                     {
                         Console.WriteLine("Fatal error database dead pls help");
                     }
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
             }
         }

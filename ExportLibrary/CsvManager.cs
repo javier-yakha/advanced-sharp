@@ -36,10 +36,7 @@ namespace ExportLibrary
 
         public static void SaveTableRowsIntoCsv(List<IDataBaseModel> tableRows, string tableName)
         {
-            string folderPath = CreateDirectoryIfNotExists(tableName);
-            
-            DateTime date = DateTime.Now;
-            string filePath = $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_{tableName}.csv";
+            string filePath = CreateFilePath(tableName);
 
             var writer = new StreamWriter(filePath);
             var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
@@ -49,7 +46,7 @@ namespace ExportLibrary
             csvWriter.Dispose();
             writer.Dispose();
         }
-        private static string CreateDirectoryIfNotExists(string tableName)
+        private static string CreateFilePath(string tableName)
         {
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\CSVdump\\{tableName}";
             bool exists = Directory.Exists(folderPath);
@@ -58,8 +55,9 @@ namespace ExportLibrary
             {
                 Directory.CreateDirectory(folderPath);
             }
+            DateTime date = DateTime.Now;
 
-            return folderPath;
+            return $"{folderPath}\\{date.Year}_{date.Month}_{date.Day}_{date.Hour}_{date.Minute}_{tableName}.csv";
         }
 
         public static void SaveIntoCsvInventories()
