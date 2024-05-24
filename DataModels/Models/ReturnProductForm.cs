@@ -29,6 +29,17 @@ namespace DataModels.Models
                 _ => "Voucher card"
             };
         }
+        public DesiredSolutions GetDesiredSolutionsEnum(string desiredSolution)
+        {
+            return desiredSolution switch
+            {
+                "Cash refund" => DesiredSolutions.CashRefund,
+                "Replacement" => DesiredSolutions.Replace,
+                "Voucher card" => DesiredSolutions.VoucherCard,
+                _ => DesiredSolutions.VoucherCard
+
+            };
+        }
         public DateTime? DateReceived { get; set; } = null;
     }
 }

@@ -1,15 +1,18 @@
-﻿using DataModels.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModels;
+using DataModels.Models;
+using ExportLibrary;
 
 namespace LibraryUI
 {
     public class CsvManagerUI
     {
         private readonly SqlManager SQL = new();
+        // private readonly CsvManager CSV = new();
 
         public void RunCsv()
         {
@@ -47,8 +50,9 @@ namespace LibraryUI
             Console.WriteLine("Saving Products into CSV file.");
 
             List<Product> products = SQL.ExecuteRetrieveAllProducts();
+            List<IDataBaseModel> dataBaseModels = new(products);
 
-            CsvManager.SaveProductsIntoCsv(products);
+            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Products");
         }
 
         private void SaveIntoCsvInventories()
@@ -56,17 +60,19 @@ namespace LibraryUI
             Console.WriteLine("Saving inventories into CSV file.");
 
             List<Inventory> inventories = SQL.ExecuteRetrieveAllInventories();
+            List<IDataBaseModel> dataBaseModels = new(inventories);
 
-            CsvManager.SaveInventoriesIntoCsv(inventories);
+            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Inventories");
         }
 
-        private void SaveIntoCsvReturnProductForms()
+        private async void SaveIntoCsvReturnProductForms()
         {
             Console.WriteLine("Saving return product forms into CSV file.");
 
-            List<ReturnProductForm> returnProductForms = SQL.ExecuteRetrieveAllReturnProductForms();
+            List<ReturnProductForm> returnProductForms = await SQL.ExecuteRetrieveAllReturnProductForms();
+            List<IDataBaseModel> dataBaseModels = new(returnProductForms);
 
-            CsvManager.SaveReturnProductFormsIntoCsv(returnProductForms);
+            CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "ReturnProductForms");
         }
     }
 }

@@ -307,19 +307,42 @@ namespace LibraryUI
             }
         }
 
-        public void RetrieveProductForms()
+        public async Task<List<ReturnProductForm>> ExecuteRetrieveAllReturnProductForms()
         {
+            List<ReturnProductForm> returnProductForms = new();
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("RETRIEVE_AllReturnProductForms", connection);
+                    SqlCommand cmd = new("RETRIEVE_AllReturnProductForms", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        ReturnProductForm returnProductForm = new()
+                        {
+                            Id = reader.GetGuid(0).ToString(),
+                            ProductId = reader.GetString(1),
+                            Used = reader.IsDBNull(2) ? null : reader.GetBoolean(2),
+                            DamagedOnArrival = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
+                            Working = reader.IsDBNull(4) ? null : reader.GetBoolean(4),
+                            CausedDamage = reader.IsDBNull(5) ? null : reader.GetBoolean(5),
+                            Complaint = reader.GetString(6),
+                            DateOrdered = reader.GetDateTime(7),
+                            ProductArrived = reader.GetBoolean(8),
+                            DesiredSolution = reader.GetString(9),
+                            DateReceived = reader.GetDateTime(10)
+                        };
+                    }
+
+                    await connection.CloseAsync();
                 }
                 catch (SqlException e)
                 {
                     Console.WriteLine(e.Message);
-                    connection.Close();
+                    await connection.CloseAsync();
                 }
             }
         }
