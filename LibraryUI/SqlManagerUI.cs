@@ -29,7 +29,7 @@ namespace LibraryUI
                 switch (selection)
                 {
                     case '1':
-                        RetrieveAllProducts();
+                        ShowAllProducts();
                         break;
                     case '2':
                         AddProduct();
@@ -53,9 +53,9 @@ namespace LibraryUI
             }
         }
 
-        public void RetrieveAllProducts()
+        public async void ShowAllProducts()
         {
-            List<Product> products = SQL.ExecuteRetrieveAllProducts();
+            List<Product> products = await SQL.ExecuteRetrieveAllProducts(true);
 
             if (products.Count == 0)
             {
@@ -169,6 +169,8 @@ namespace LibraryUI
         public void SearchProduct()
         {
             throw new NotImplementedException();
+            // TODO - implement search product
+            /*
             Console.WriteLine("Searching a product.");
             Console.WriteLine("Enter the product name to search.");
             string? title = null;
@@ -176,9 +178,8 @@ namespace LibraryUI
             {
                 title = Console.ReadLine();
             }
-            // TODO - implement search product
             var productList = SQL.ExecuteRetrieveAllProductsByName();
-
+            */
         }
     }
 }

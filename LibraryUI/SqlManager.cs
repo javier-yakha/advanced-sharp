@@ -20,26 +20,35 @@ namespace LibraryUI
         {
             ConnectionString = "Data Source=DESKTOP-SIE9983;Initial Catalog=db_taurius;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0";
         }
-        
-        public List<Product> ExecuteRetrieveAllProducts()
+        /// <summary>
+        /// Retrieves all the products from the database.
+        /// If the stock value is needed together,
+        /// a boolean value can be given to determine the case.
+        /// </summary>
+        /// <param name="stock">Determines if the Total Stock value is passed along.
+        /// True to add stock.
+        /// False to leave it as it is.</param>
+        /// <returns>A List of every Product in the database, optionally together with it's stock.</returns>
+        public async Task<List<Product>> ExecuteRetrieveAllProducts(bool stock)
         {
             List<Product> results = [];
 
+            string cmdText = "RETRIEVE_AllProducts" + (stock ? "AndStock" : "");
             using SqlConnection conn = new(ConnectionString);
-            conn.Open();
+            await conn.OpenAsync();
             try
             {
-                SqlCommand command = new("RETRIEVE_AllProducts", conn);
+                SqlCommand command = new($"{cmdText}", conn);
                 command.CommandType = CommandType.StoredProcedure;
 
-                SqlDataReader reader = command.ExecuteReader();
+                SqlDataReader reader = await command.ExecuteReaderAsync();
 
                 if (!reader.HasRows)
                 {
                     return results;
                 }
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     Product product = new()
                     {
@@ -50,12 +59,13 @@ namespace LibraryUI
                         Description = reader.GetString(4),
                         DiscountPrice = reader.GetDecimal(5),
                         Enabled = reader.GetBoolean(6),
-                        TotalStock = reader.GetInt32(7)
+                        TotalStock = stock ? reader.GetInt32(7) : null
                     };
-
+                    
                     results.Add(product);
                 }
-                conn.Close();
+
+                await conn.CloseAsync();
 
                 return results;
             }

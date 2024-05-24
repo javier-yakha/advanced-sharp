@@ -45,11 +45,11 @@ namespace LibraryUI
             }
         }
 
-        private void SaveIntoCsvProducts()
+        private async void SaveIntoCsvProducts()
         {
             Console.WriteLine("Saving Products into CSV file.");
 
-            List<Product> products = SQL.ExecuteRetrieveAllProducts();
+            List<Product> products = await SQL.ExecuteRetrieveAllProducts(false);
             List<IDataBaseModel> dataBaseModels = new(products);
 
             CsvManager.SaveTableRowsIntoCsv(dataBaseModels, "Products");
